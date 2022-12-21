@@ -1,0 +1,7 @@
+This is a simple text file to note what I have done, and therefore might have screwed up for later evaluation.
+
+A link to a Bootstrap CDN is in index.html
+installed angular-google-charts with npm "npm install angular-google-charts"
+I dont think i will use the google charts
+
+Using "ng install ag-charts-community ag-charts-angular" for now...

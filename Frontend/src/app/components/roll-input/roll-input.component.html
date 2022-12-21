@@ -1,0 +1,55 @@
+<!-- Container to hold the 3 rows for input -->
+<div class="container-fluid">
+        <!-- Each row is split into thirds, so the middle part with the input fields
+                Only take up 1/3 of the screen -->
+        <div class="row">
+                <!-- One of the divs with empty space -->
+                <div class="col-4"></div>
+                <!-- One of the divs that holds the input fields-->
+                <div class="col-4 middleCol">
+                        <!--div here is to palce the input below the label -->
+                        <label>Dice Size</label><div></div>
+                        <input type="number" [(ngModel)]="diceSize" placeholder="6">
+                </div>
+                <!-- The last div with empty space -->
+                <div class="col-4"></div>
+        </div>
+        <div class="row">
+                <div class="col-4"></div>
+                <div class="col-4 middleCol">
+                        <label>Number of Dice</label><div></div>
+                        <input type="number" [(ngModel)]="numDice" placeholder="2">
+                </div>
+                <div class="col-4"></div>
+        </div>
+        <div class="row">
+                <div class="col-4"></div>
+                <div class="col-4 middleCol">
+                        <label>Number of Rolls</label><div></div>
+                        <input type="number" [(ngModel)]="diceRolls" placeholder="100" style="width:max-content">
+                </div>
+                <div class="col-4"></div>
+        </div>
+        <div class="row">
+                <div class="col-4"></div>
+                <div class="col-4 middleCol">
+                        <button title="Roll Dice" (click)="rollDice2()">Roll Your Dice</button>
+                </div>
+                <div class="col-4"></div>
+        </div>
+</div>
+<app-roll-results [rollResults]="rollResults" [diceSize]="diceSize" [numDice]="numDice" [diceRolls]="diceRolls"></app-roll-results>
+<!-- <div id="outer-div">
+    <div class="inner-div">
+            <span class="span-label"><label>Dice Size</label></span>
+            <span class="span-input"><input type="text" placeholder="6"></span>
+    </div>
+    <div class="inner-div">
+            <span class="span-label"><label>Number of Dice</label></span>
+            <span class="span-input"><input type="text" placeholder="2"></span>
+    </div>
+    <div class="inner-div">
+            <span class="span-label"><label>Number of Rolls</label></span>
+            <span class="span-input"><input type="text" placeholder="100" style="width:max-content"></span>
+    </div>
+</div> -->

@@ -1,0 +1,29 @@
+<div class="container-fluid">
+    <!-- Each row is split into thirds, so the middle part with the input fields
+            Only take up 1/3 of the screen -->
+    <div class="row">
+            <!-- One of the divs with empty space -->
+            <div class="col-4"></div>
+            <!-- One of the divs that holds the input fields-->
+            <div class="col-4 middleCol"
+            title="Delay in ms for data being added to the graph">
+                <label>Delay Time</label><div></div>
+                <input type="number" [(ngModel)]="delayTime" placeholder="100"
+                >
+            </div>
+            <div class="col-4"></div>
+    </div>
+</div>
+<!-- <div *ngIf="rollResults">
+    <ul>
+        <li *ngFor="let roll of rollResults">
+            <span>{{roll}}</span>
+        </li>
+    </ul>
+</div> -->
+<div *ngIf="rollResults">
+    <ag-charts-angular
+        style=""
+        [options]="options">
+    </ag-charts-angular>
+</div>

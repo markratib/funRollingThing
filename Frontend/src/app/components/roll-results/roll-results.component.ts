@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, HostListener, Host } from '@angular/core';
 import { GraphNode } from 'src/app/graphNode';
 import { LinkingServiceService } from 'src/app/services/linking-service.service';
 
@@ -15,33 +15,22 @@ export class RollResultsComponent implements OnInit {
   minResults: number = 0;
   maxResults: number = 0;
   graphNodes = new Array<GraphNode>;
-
-
   delayTime?: number;
-
   public options: any;
-
-  // data = [
-  //     {
-  //         quarter: 'Q1',
-  //         spending: 450,
-  //     },
-  //     {
-  //         quarter: 'Q2',
-  //         spending: 560,
-  //     },
-  //     {
-  //         quarter: 'Q3',
-  //         spending: 600,
-  //     },
-  //     {
-  //         quarter: 'Q4',
-  //         spending: 700,
-  //     },
-  // ];
   data: Array<GraphNode> = new Array();
+  scrnHeight:any;
+  scrnWidth:any;
 
-  
+  //get screen width in real time and resize the chart as it happens
+  @HostListener('window:resize', ['$event'])
+  getScreenSize()
+  {
+    this.scrnHeight = window.innerHeight;
+    this.scrnWidth = window.innerWidth;
+    this.options = {
+      width: this.scrnWidth,
+    }
+  }
   test(str:number, int:number): void
   {
     let newNode: GraphNode = new GraphNode();
@@ -53,32 +42,21 @@ export class RollResultsComponent implements OnInit {
   }
 
   constructor(private linkingService: LinkingServiceService) {
-
-    //testing chart stuff
-    // const stuff = { quarter:'Q5', spending: 1000}
-    // this.data.push(stuff);
-    this.test(1, 450);
-    this.test(2, 500);
-    this.test(3, 600);
-    this.options = {
-      data: this.data,
-      series: [{
-        type: 'column',
-        xKey: 'num',
-        yKey: 'quantity',
-      }],
-    };
+    this.getScreenSize();
+    
   }
 
+  //Function to set up the chart
   chartSetup(): void
   {
     this.graphNodes = new Array<GraphNode>;
     //calculate the number of possible results
     this.minResults = this.numDice;
     this.maxResults = this.numDice * this.diceSize;
-    console.log("minResults = " + this.minResults +
-      "\nmaxResults = " + this.maxResults);
-    
+    //output to check stuff
+    // console.log("minResults = " + this.minResults +
+    //   "\nmaxResults = " + this.maxResults);
+    //load up the data structure to be used in the graph
     for( let i = this.minResults; i <= this.maxResults; i++)
     {
       let newNode = new GraphNode();
@@ -86,7 +64,8 @@ export class RollResultsComponent implements OnInit {
       newNode.quantity = 0;
       this.graphNodes.push(newNode);
     }
-    console.log("graphNodes = " + this.graphNodes);
+    //output to check stuff
+    // console.log("graphNodes = " + this.graphNodes);
     //put data into the nodes
     if(typeof this.rollResults != "undefined")
     {
@@ -94,12 +73,15 @@ export class RollResultsComponent implements OnInit {
       {
         // console.log(this.rollResults[i]);
         this.graphNodes[this.rollResults[i] - this.minResults].quantity++;
-        
       }
     }
-    console.log(this.graphNodes);
+    // console.log(this.graphNodes);
     this.data = this.graphNodes;
     this.options = {
+      //says autsize is an unknown property
+      // autosize: 'false',
+      height: this.diceSize * this.numDice * 30,
+      width: this.scrnWidth,
       series: [{
         data: this.data,
         type: 'bar',
@@ -107,14 +89,14 @@ export class RollResultsComponent implements OnInit {
         yKey: 'quantity',
       }],
     }
-    
   }
+
+  
 
   ngOnInit(): void {
     this.linkingService.getResults.subscribe(results => {
-      console.log("Results in rollresults component = " + results);
+      // console.log("Results in rollresults component = " + results);
       this.rollResults = results.rollResults;
-
       this.chartSetup();
     })
   }

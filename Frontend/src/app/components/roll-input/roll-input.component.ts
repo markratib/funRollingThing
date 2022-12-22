@@ -27,7 +27,7 @@ export class RollInputComponent implements OnInit {
     {
       const result = this.diceService.rollDice(this.diceSize, this.numDice, this.diceRolls);
       
-      console.log(result);
+      // console.log(result);
     } catch (err)
     {
       console.log(err);
@@ -45,7 +45,7 @@ export class RollInputComponent implements OnInit {
           console.log(data);
           this.rollResults = data;
           this.tObject = new transferObject(data, this.diceSize, this.numDice, this.diceRolls)
-          console.log(this.tObject)
+          // console.log(this.tObject)
           this.linkService.addResults(this.tObject);
         });
     } catch (err)

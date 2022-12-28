@@ -43,12 +43,53 @@ export class RollResultsComponent implements OnInit {
 
   constructor(private linkingService: LinkingServiceService) {
     this.getScreenSize();
+    this.options = {
+      title: {
+        text: "Apple's revenue by product category",
+      },
+      subtitle: {
+        text: 'in billion U.S. dollars',
+      },
+      series: [
+        {
+          type: 'column',
+          xKey: 'quarter',
+          yKey: 'iphone',
+          yName: 'iPhone',
+        },
+        {
+          type: 'column',
+          xKey: 'quarter',
+          yKey: 'mac',
+          yName: 'Mac',
+        },
+        {
+          type: 'column',
+          xKey: 'quarter',
+          yKey: 'ipad',
+          yName: 'iPad',
+        },
+        {
+          type: 'column',
+          xKey: 'quarter',
+          yKey: 'wearables',
+          yName: 'Wearables',
+        },
+        {
+          type: 'column',
+          xKey: 'quarter',
+          yKey: 'services',
+          yName: 'Services',
+        },
+      ],
+    };
     
   }
 
   //Function to set up the chart
   chartSetup(): void
   {
+    let porbability: Array<GraphNode> = this.probabilitySetup();
     this.graphNodes = new Array<GraphNode>;
     //calculate the number of possible results
     this.minResults = this.numDice;
@@ -80,15 +121,81 @@ export class RollResultsComponent implements OnInit {
     this.options = {
       //says autsize is an unknown property
       // autosize: 'false',
-      height: this.diceSize * this.numDice * 30,
+      title: {text: "Roll Results"},
+      height: this.diceSize * this.numDice * 40,
       width: this.scrnWidth,
+      data: this.data,
       series: [{
-        data: this.data,
+        
         type: 'bar',
         xKey: 'num',
         yKey: 'quantity',
       }],
     }
+  }
+
+  probabilitySetup(): Array<GraphNode>
+  {
+    let resultsCounter: Array<number> = new Array<number>;
+    let diceCounter: Array<number> = [this.numDice];
+    let diceArray: Array<number> = new Array<number>;
+    let results: Array<number> = new Array<number>;
+    let returnResults: Array<GraphNode> = new Array<GraphNode>;
+    //set up the number of dice
+    for(let i:number = 0; i<this.numDice; i++)
+    {
+      diceArray.push(1);
+    }
+
+    for(let i:number = 0; i < this.diceSize**this.numDice; i++)
+    {
+      let stuff: number = 0;
+      for(let j: number = 0; j < this.numDice; j++)
+      {
+        stuff += diceArray[j];
+      }
+      results.push(stuff);
+
+      let incNext: boolean = true;
+
+      for(let j:number = 0; j < this.numDice; j++)
+      {
+        if(diceArray[j] < this.diceSize && incNext)
+        {
+          diceArray[j]++;
+          incNext = false;
+        }
+        else if(incNext)
+        {
+          diceArray[j] = 1;
+          incNext = true;
+        }
+      }
+    }
+    //add up each result
+    // console.log("length = " + resultsCounter.length);
+    for(let i:number = 0; i < this.numDice * this.diceSize - 1; i++)
+    {
+      resultsCounter.push(0);
+    }
+    for(let i:number = 0; i < results.length; i++)
+    {
+        resultsCounter[( results[i] - this.numDice )] += 1;
+        // console.log("resultsCounter = " + resultsCounter.toString())
+        // console.log("results[i] = " + (results[i] - this.numDice))
+    }
+    console.log("resultsCounter = " + resultsCounter.toString())
+    //put it in the graphnode array
+    for(let i:number = 0; i < resultsCounter.length; i++)
+    {
+      let newNode: GraphNode = new GraphNode;
+      newNode.num = i + this.numDice;
+      newNode.quantity = resultsCounter[i];
+
+      returnResults.push(newNode);
+    }
+
+    return returnResults;
   }
 
   

@@ -4,6 +4,7 @@ export class GraphNode
     num: number = 0;
     //the number of times this result happens
     quantity: number = 0;
+    probability: number = 0;
 
     constructor() { }
 

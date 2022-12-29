@@ -12,6 +12,7 @@ export class RollResultsComponent implements OnInit {
   @Input() diceSize: number = 0;
   @Input() numDice: number = 0;
   @Input() diceRolls: number = 0;
+  showDetails: boolean = false;
   minResults: number = 0;
   maxResults: number = 0;
   graphNodes = new Array<GraphNode>;
@@ -43,46 +44,46 @@ export class RollResultsComponent implements OnInit {
 
   constructor(private linkingService: LinkingServiceService) {
     this.getScreenSize();
-    this.options = {
-      title: {
-        text: "Apple's revenue by product category",
-      },
-      subtitle: {
-        text: 'in billion U.S. dollars',
-      },
-      series: [
-        {
-          type: 'column',
-          xKey: 'quarter',
-          yKey: 'iphone',
-          yName: 'iPhone',
-        },
-        {
-          type: 'column',
-          xKey: 'quarter',
-          yKey: 'mac',
-          yName: 'Mac',
-        },
-        {
-          type: 'column',
-          xKey: 'quarter',
-          yKey: 'ipad',
-          yName: 'iPad',
-        },
-        {
-          type: 'column',
-          xKey: 'quarter',
-          yKey: 'wearables',
-          yName: 'Wearables',
-        },
-        {
-          type: 'column',
-          xKey: 'quarter',
-          yKey: 'services',
-          yName: 'Services',
-        },
-      ],
-    };
+    // this.options = {
+    //   title: {
+    //     text: "Apple's revenue by product category",
+    //   },
+    //   subtitle: {
+    //     text: 'in billion U.S. dollars',
+    //   },
+    //   series: [
+    //     {
+    //       type: 'column',
+    //       xKey: 'quarter',
+    //       yKey: 'iphone',
+    //       yName: 'iPhone',
+    //     },
+    //     {
+    //       type: 'column',
+    //       xKey: 'quarter',
+    //       yKey: 'mac',
+    //       yName: 'Mac',
+    //     },
+    //     {
+    //       type: 'column',
+    //       xKey: 'quarter',
+    //       yKey: 'ipad',
+    //       yName: 'iPad',
+    //     },
+    //     {
+    //       type: 'column',
+    //       xKey: 'quarter',
+    //       yKey: 'wearables',
+    //       yName: 'Wearables',
+    //     },
+    //     {
+    //       type: 'column',
+    //       xKey: 'quarter',
+    //       yKey: 'services',
+    //       yName: 'Services',
+    //     },
+    //   ],
+    // };
     
   }
 
@@ -103,8 +104,15 @@ export class RollResultsComponent implements OnInit {
       let newNode = new GraphNode();
       newNode.num = i;
       newNode.quantity = 0;
+      newNode.probability = (this.diceRolls / this.diceSize ** this.numDice ) * porbability[i - this.numDice].quantity;
       this.graphNodes.push(newNode);
     }
+    console.log(this.graphNodes)
+    // for(let i = 0; i < porbability.length; i++)
+    // {
+    //   this.graphNodes[i].probability = porbability[i - this.numDice].quantity;
+    //   // console.log(i);
+    // }
     //output to check stuff
     // console.log("graphNodes = " + this.graphNodes);
     //put data into the nodes
@@ -126,11 +134,17 @@ export class RollResultsComponent implements OnInit {
       width: this.scrnWidth,
       data: this.data,
       series: [{
-        
         type: 'bar',
         xKey: 'num',
         yKey: 'quantity',
-      }],
+        yName: 'Times Rolled',
+      },
+      {
+        type: 'bar',
+        xKey: 'num',
+        yKey: 'probability',
+        yName: 'Probabilty'
+      },],
     }
   }
 

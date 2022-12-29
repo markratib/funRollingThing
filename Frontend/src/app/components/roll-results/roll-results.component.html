@@ -21,6 +21,9 @@
         </li>
     </ul>
 </div> -->
+<div *ngIf="rollResults && showDetails">
+    <p> I am conditionally shown.</p>
+</div>
 <div *ngIf="rollResults">
     <ag-charts-angular 
         style="text-align: center;"

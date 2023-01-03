@@ -12,9 +12,11 @@ export class RollResultsComponent implements OnInit {
   @Input() diceSize: number = 0;
   @Input() numDice: number = 0;
   @Input() diceRolls: number = 0;
-  showDetails: boolean = false;
+  numPossibilities?: number;
+  showDetails: boolean = true;
   minResults: number = 0;
   maxResults: number = 0;
+  
   graphNodes = new Array<GraphNode>;
   delayTime?: number;
   public options: any;
@@ -90,11 +92,18 @@ export class RollResultsComponent implements OnInit {
   //Function to set up the chart
   chartSetup(): void
   {
-    let porbability: Array<GraphNode> = this.probabilitySetup();
+    //bool to determine if it's worth it to calculate probability
+    let calcProb: boolean = this.diceSize ** this.numDice < 100000000;
+    let probability: Array<GraphNode> = new Array<GraphNode>();
+    this.numPossibilities = this.diceSize ** this.numDice
     this.graphNodes = new Array<GraphNode>;
     //calculate the number of possible results
     this.minResults = this.numDice;
     this.maxResults = this.numDice * this.diceSize;
+    if(calcProb)
+    {
+      probability = this.probabilitySetup();
+    }
     //output to check stuff
     // console.log("minResults = " + this.minResults +
     //   "\nmaxResults = " + this.maxResults);
@@ -104,7 +113,10 @@ export class RollResultsComponent implements OnInit {
       let newNode = new GraphNode();
       newNode.num = i;
       newNode.quantity = 0;
-      newNode.probability = (this.diceRolls / this.diceSize ** this.numDice ) * porbability[i - this.numDice].quantity;
+      if(calcProb)
+      {
+        newNode.probability = (this.diceRolls / this.diceSize ** this.numDice ) * probability[i - this.numDice].quantity;
+      }
       this.graphNodes.push(newNode);
     }
     console.log(this.graphNodes)
@@ -210,6 +222,11 @@ export class RollResultsComponent implements OnInit {
     }
 
     return returnResults;
+  }
+
+  toggleDetails(): void
+  {
+    this.showDetails = !this.showDetails;
   }
 
   

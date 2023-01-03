@@ -2,6 +2,7 @@
 export class transferObject
 {
     rollResults?: number[];
+    probResults?: number[];
     diceSize?: number;
     numDice?: number;
     diceRolls?: number;

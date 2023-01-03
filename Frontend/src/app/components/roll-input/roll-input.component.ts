@@ -12,9 +12,12 @@ export class RollInputComponent implements OnInit {
   baseUrl: string = "http://127.0.0.1:9000/roll?";
   diceSize: number = 6;
   numDice: number = 2;
-  diceRolls: number = 20;
+  diceRolls: number = 36;
   rollResults?: number[];
   tObject?: transferObject;
+
+  maxRolls: number = 0;
+  
   constructor(private diceService: DiceServiceService, private linkService: LinkingServiceService) { }
 
   ngOnInit(): void {

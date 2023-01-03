@@ -32,8 +32,8 @@
     </div>
     <ul>
         <li *ngFor="let item of graphNodes" class="center-align">
-            <span>Value: {{item.num}}, </span>
-            <span>Rolled: {{item.quantity}}, </span>
+            <span>Value: {{item.num | number: '3.0-0'}} | </span>
+            <span>Rolled: {{item.quantity | number: '6.0-0'}} | </span>
             <span *ngIf="item.probability != 0">Expected: {{item.probability | number: '1.0-3'}}</span>
         </li>
     </ul>

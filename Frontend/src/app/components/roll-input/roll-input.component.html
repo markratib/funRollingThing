@@ -26,7 +26,7 @@
                 <div class="col-4"></div>
                 <div class="col-4 middleCol">
                         <label>Number of Rolls</label><div></div>
-                        <input type="number" [(ngModel)]="diceRolls" placeholder="100" style="width:max-content">
+                        <input type="number" [(ngModel)]="numRolls" placeholder="100" style="width:max-content">
                 </div>
                 <div class="col-4"></div>
         </div>
@@ -38,7 +38,7 @@
                 <div class="col-4"></div>
         </div>
 </div>
-<app-roll-results [rollResults]="rollResults" [diceSize]="diceSize" [numDice]="numDice" [diceRolls]="diceRolls"></app-roll-results>
+<app-roll-results [rollResults]="rollResults" [diceSize]="diceSize" [numDice]="numDice" [diceRolls]="numRolls"></app-roll-results>
 <!-- <div id="outer-div">
     <div class="inner-div">
             <span class="span-label"><label>Dice Size</label></span>

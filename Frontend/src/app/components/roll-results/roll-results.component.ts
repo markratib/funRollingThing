@@ -14,8 +14,10 @@ export class RollResultsComponent implements OnInit {
   @Input() diceRolls: number = 0;
   numPossibilities?: number;
   showDetails: boolean = true;
+  showDetailsTooBig: boolean = false;
   minResults: number = 0;
   maxResults: number = 0;
+  showDetailsButton: boolean = false;
   
   graphNodes = new Array<GraphNode>;
   delayTime?: number;
@@ -95,11 +97,15 @@ export class RollResultsComponent implements OnInit {
     //bool to determine if it's worth it to calculate probability
     let calcProb: boolean = this.diceSize ** this.numDice < 100000000;
     let probability: Array<GraphNode> = new Array<GraphNode>();
+    let dateTime: Date = new Date();
     this.numPossibilities = this.diceSize ** this.numDice
     this.graphNodes = new Array<GraphNode>;
     //calculate the number of possible results
     this.minResults = this.numDice;
     this.maxResults = this.numDice * this.diceSize;
+    this.showDetailsButton = true;
+    console.log("Starting chart setup at: " + dateTime.getHours() +":"+dateTime.getMinutes()+":"+dateTime.getSeconds());
+
     if(calcProb)
     {
       probability = this.probabilitySetup();
@@ -119,7 +125,7 @@ export class RollResultsComponent implements OnInit {
       }
       this.graphNodes.push(newNode);
     }
-    console.log(this.graphNodes)
+    // console.log("GraphNodes Object = " + this.graphNodes)
     // for(let i = 0; i < porbability.length; i++)
     // {
     //   this.graphNodes[i].probability = porbability[i - this.numDice].quantity;
@@ -137,33 +143,43 @@ export class RollResultsComponent implements OnInit {
       }
     }
     // console.log(this.graphNodes);
-    this.data = this.graphNodes;
-    this.options = {
-      //says autsize is an unknown property
-      // autosize: 'false',
-      title: {text: "Roll Results"},
-      height: this.diceSize * this.numDice * 40,
-      width: this.scrnWidth,
-      data: this.data,
-      series: [{
-        type: 'bar',
-        xKey: 'num',
-        yKey: 'quantity',
-        yName: 'Times Rolled',
-      },
-      {
-        type: 'bar',
-        xKey: 'num',
-        yKey: 'probability',
-        yName: 'Probabilty'
-      },],
+    if(this.numDice >= 1000)
+    {
+      this.showDetailsTooBig = true;
     }
+    else//number of rolls is reasonable
+    {
+      this.data = this.graphNodes;
+      this.options = {
+        //says autsize is an unknown property
+        // autosize: 'false',
+        title: {text: "Roll Results"},
+        height: this.diceSize * this.numDice * 40,
+        width: this.scrnWidth,
+        data: this.data,
+        series: [{
+          type: 'bar',
+          xKey: 'num',
+          yKey: 'quantity',
+          yName: 'Times Rolled',
+        },
+        {
+          type: 'bar',
+          xKey: 'num',
+          yKey: 'probability',
+          yName: 'Probabilty'
+        },],
+      }
+    }
+    dateTime = new Date();
+    console.log("FInishedchart setup at: " + dateTime.getHours() +":"+dateTime.getMinutes()+":"+dateTime.getSeconds());
+
   }
 
   probabilitySetup(): Array<GraphNode>
   {
     let resultsCounter: Array<number> = new Array<number>;
-    let diceCounter: Array<number> = [this.numDice];
+    // let diceCounter: Array<number> = [this.numDice];
     let diceArray: Array<number> = new Array<number>;
     let results: Array<number> = new Array<number>;
     let returnResults: Array<GraphNode> = new Array<GraphNode>;

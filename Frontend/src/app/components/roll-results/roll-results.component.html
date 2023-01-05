@@ -11,7 +11,7 @@
                 <label>Delay Time</label><div></div>
                 <input type="number" [(ngModel)]="delayTime" placeholder="100">
             </div>
-            <div>
+            <div *ngIf="showDetailsButton">
                 <button (click)="toggleDetails()">Show Details</button>
             </div>
             
@@ -26,7 +26,23 @@
         </li>
     </ul>
 </div> -->
-<div *ngIf="rollResults && showDetails">
+<!--This div is shown if there are too many possibilites.-->
+<div *ngIf="showDetailsTooBig">
+    <div>
+        <span>Number of possibilites: {{numPossibilities | number}}</span>
+    </div>
+    <ul>
+        <li *ngFor="let item of graphNodes" class="center-align">
+            <!-- <span *ngIf="item.quantity > 0"> -->
+                <span>Value: {{item.num | number: '3.0-0'}} | </span>
+                <span>Rolled: {{item.quantity | number: '6.0-0'}} | </span>
+                <span *ngIf="item.probability != 0">Expected: {{item.probability | number: '1.0-3'}}</span>
+            <!-- </span> -->
+        </li>
+    </ul>
+</div>
+<!--This div is shown if the amount of possibilites is manageble-->
+<div *ngIf="(rollResults && showDetails)">
     <div>
         <span>Number of possibilites: {{numPossibilities | number}}</span>
     </div>
@@ -38,7 +54,7 @@
         </li>
     </ul>
 </div>
-<div *ngIf="rollResults">
+<div *ngIf="rollResults && !showDetailsTooBig">
     <ag-charts-angular 
         style="text-align: center;"
         [options]="options">

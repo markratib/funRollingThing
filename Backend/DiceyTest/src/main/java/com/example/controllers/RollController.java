@@ -1,8 +1,11 @@
 package com.example.controllers;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -21,10 +24,11 @@ public class RollController
 
 	@CrossOrigin
 	@GetMapping
-	public ResponseEntity rollDice(@RequestParam int size, @RequestParam int numDice, @RequestParam int rolls)
+	public ResponseEntity rollDice(HttpServletResponse response, @RequestParam int size, @RequestParam int numDice, @RequestParam int rolls)
 	{
+		System.out.println("Receieved request with: \nDieSize: " + size + "\nNumDice: " + numDice + "\nRolls: " + rolls);
 		List<CalculationThread> threadList = new ArrayList<CalculationThread>();
-		
+		response.setHeader("Transfer-Encoding", "chunked");
 		//Holds the result of rolling numDice
 		List<Integer> results = new ArrayList<Integer>();
 		
@@ -34,6 +38,9 @@ public class RollController
 			//If numDice is less than 1, set it to 1.
 			//In the future, a maximum can also be set
 			numDice = 1;
+		}else if(numDice > 10000)
+		{
+			numDice = 10000;
 		}
 		if(size < 1)
 		{
@@ -44,13 +51,15 @@ public class RollController
 		{
 			//If we roll less than 1 times, we don't roll at all. That's silly.
 			rolls = 1;
-		}
-		if(rolls > 450000000)
+		}else if(rolls > 450000000)
 		{
 			rolls = 450000000;
 		}
 		
+		
 		long beforeTime = System.currentTimeMillis();
+		Date startDate = new Date(beforeTime);
+		System.out.println("Request started at: " + startDate);
 //		results = calcRolls(size, numDice, rolls);
 //		results = calcRollsThreaded(size, numDice, rolls);
 		results = calcRollsThreaded2(size, numDice, rolls);
@@ -140,9 +149,10 @@ public class RollController
 			}
 			else//sleep for 1 second
 			{
-				try {
+				try 
+				{
 					Thread.sleep(1000);
-				} catch (InterruptedException e) {
+				}catch (InterruptedException e) {
 					System.out.println("Something went wrong while waiting...");
 					e.printStackTrace();
 				}
@@ -230,9 +240,11 @@ public class RollController
 				}
 				else//sleep for 1 second
 				{
-					try {
+					try 
+					{
 						Thread.sleep(1000);
-					} catch (InterruptedException e) {
+					} catch (InterruptedException e) 
+					{
 						System.out.println("Something went wrong while waiting...");
 						e.printStackTrace();
 					}
@@ -243,7 +255,7 @@ public class RollController
 			//populate the return list
 			for(CalculationThread2 thread: threadList)
 			{
-//						System.out.println("adding " + thread.getResults() + " from " + thread.getName());
+				//System.out.println("adding " + thread.getResults() + " from " + thread.getName());
 				results.addAll(thread.getResults());
 				thread.freeResults();
 			}

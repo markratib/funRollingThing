@@ -12,7 +12,7 @@ export class RollInputComponent implements OnInit {
   baseUrl: string = "http://127.0.0.1:9000/roll?";
   diceSize: number = 6;
   numDice: number = 2;
-  numRolls: number = 36;
+  numRolls: number = 144;
   rollResults?: number[];
   tObject?: transferObject;
 
@@ -45,15 +45,22 @@ export class RollInputComponent implements OnInit {
       if(this.numRolls >= 450000000)
       {
         numOfRolls = 450000000
+        numOfRolls = this.numRolls
       }else
       {
         numOfRolls = this.numRolls;
       }
+      let beforeTime: Date = new Date();
+      console.log("Request sent at: " + beforeTime.getHours() +":"+beforeTime.getMinutes()+":"+beforeTime.getSeconds());
       const result = this.diceService.rollDice2(
         this.diceSize, 
         this.numDice, 
         numOfRolls).subscribe(data => {
-          console.log(data);
+          
+          let afterTime: Date = new Date();
+          console.log("Recieved response at " + afterTime.getHours() +":"+afterTime.getMinutes()+":"+afterTime.getSeconds());
+          // console.log("Request took " + (afterTime.getMilliseconds() - beforeTime.getMilliseconds()) + "ms.")
+          // console.log(data);
           this.rollResults = data;
           this.tObject = new transferObject(data, this.diceSize, this.numDice, numOfRolls)
           // console.log(this.tObject)

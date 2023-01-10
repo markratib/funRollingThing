@@ -1,0 +1,59 @@
+
+#topbar
+{
+    background-color: midnightblue;
+    height: 50px;
+    /* padding-top: 10px; */
+}
+#anchorHolder
+{
+    padding-left: 10px;
+}
+#navSpan
+{
+    /* display: inline-block;
+    height: 100%;
+
+    background-color: teal; */
+}
+.navLink
+{
+    display: inline-block;
+    text-decoration: none;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    min-width: 100px;
+    text-align: center;
+    /* border-radius: 4px; */
+    border:  1px darkgrey solid;
+    background-color: lightgrey;
+    color: black;
+}
+
+.navLink:hover
+{
+    background-color: darkgray;
+    border:1px lightgrey solid;
+}
+.navLink:active
+{
+    background-color: black;
+    color: whitesmoke;
+}
+
+nav a {
+    /* padding: 1rem;
+    text-decoration: none;
+    display: inline-block;
+    background-color: #e8e8e8;
+    color: #3d3d3d;
+    border-radius: 4px; */
+  }
+  
+  nav a:hover {
+    /* color: white;
+    background-color: #42545C; */
+  }
+  nav a:active {
+    /* background-color: black; */
+  }

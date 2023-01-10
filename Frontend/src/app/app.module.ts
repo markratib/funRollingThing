@@ -8,12 +8,18 @@ import { AppComponent } from './app.component';
 import { RollInputComponent } from './components/roll-input/roll-input.component';
 import { RollResultsComponent } from './components/roll-results/roll-results.component';
 import { AgChartsAngularModule } from 'ag-charts-angular';
+import { TopBarComponent } from './components/top-bar/top-bar.component';
+import { HomePageComponent } from './components/home-page/home-page.component';
+import { AboutMeComponent } from './components/about-me/about-me.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     RollInputComponent,
-    RollResultsComponent
+    RollResultsComponent,
+    TopBarComponent,
+    HomePageComponent,
+    AboutMeComponent
   ],
   imports: [
     BrowserModule,

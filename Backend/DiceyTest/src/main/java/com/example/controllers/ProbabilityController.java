@@ -1,50 +1,117 @@
 package com.example.controllers;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.threads.CalculationThread2;
 import com.example.threads.ProbabilityThread;
 
 @RestController
 @RequestMapping(value="/probability")
 public class ProbabilityController 
 {
+//	@CrossOrigin
+//	@GetMapping
+//	public ResponseEntity rollDice(@RequestParam int size, @RequestParam int numDice) throws IOException
+//	{
+//		List<Integer> results = new ArrayList<Integer>();
+//		long startMilli = System.currentTimeMillis();
+//		Date dateNow = new Date(System.currentTimeMillis());
+//		System.out.println("Request recieved at: " + dateNow);
+//		
+//		results = determineProbability(size, numDice);
+////		results = determineProbThreaded(response, size, numDice);
+//		
+//		System.out.println("Number of results: " + results.size());
+//		System.out.println("Request finished in " + (System.currentTimeMillis() - startMilli) + "ms");
+//		return ResponseEntity.status(200).body(results);
+//	}
+	
 	@CrossOrigin
 	@GetMapping
-//	public ResponseEntity rollDice(HttpServletResponse response, @RequestParam int size, @RequestParam int numDice) throws IOException
 	public void rollDice(HttpServletResponse response, @RequestParam int size, @RequestParam int numDice) throws IOException
 	{
 		List<Integer> results = new ArrayList<Integer>();
+		OutputStream outStream = response.getOutputStream();
+		PrintWriter outWriter = new PrintWriter(outStream);
 		long startMilli = System.currentTimeMillis();
-		response.setHeader("Transfer-Encoding", "chunked");
-		response.getWriter().println("hello :)");
-		response.flushBuffer();
-		results = determineProbability(size, numDice);
-//		results = determineProbThreaded(size, numDice);
-		System.out.println("Number of results: " + results.size());
+		long resultsSize = 0;
+		long startNum = 1;
+		long interval = 100000;
+		long endNum = interval;
+		boolean doCalc = true;
+		Date dateNow = new Date(System.currentTimeMillis());
+		System.out.println("Request recieved at: " + dateNow);
+//		response.setHeader("Transfer-Encoding", "chunked");
+//		response.getWriter().println("hello :)");
+//		response.flushBuffer();
+		outWriter.println("[");
+		//check if the end number is less than the actual end
+		System.out.println(((int) Math.pow(size, numDice) < endNum));
+		if((int) Math.pow(size, numDice) < endNum)
+		{
+			System.out.println("Number of possibilitie: " + Math.pow(size, numDice) +
+					"\nSetting endNum to " + endNum);
+			endNum = (int) Math.pow(size, numDice);
+		}
+		do
+		{
+			results = null;
+			results = new ArrayList<Integer>();
+			System.out.println("startNum: " + startNum + ". endNum: " + endNum);
+			results = determineProbability(size, numDice, startNum, endNum);
+			//response.getWriter().print(results);
+			for(Integer result : results)
+			{
+				outWriter.print("\n " + result.toString() + ", ");
+			}
+			outWriter.flush();
+			//check if we're at the end of the list
+			if(endNum == (int) Math.pow(size, numDice))
+			{
+				//if we are, break our of the loop
+				doCalc = false;
+			}else if(endNum + interval > (int) Math.pow(size, numDice))
+			{
+				//we're past the list, so we need to go back to the end
+				startNum = endNum + 1;
+				endNum = (int) Math.pow(size, numDice);
+			}else
+			{
+				//we're not past the end, increment both start and end
+				startNum = endNum + 1;
+				endNum += interval;
+			}
+			resultsSize += results.size();
+//			System.out.println("Results size so far: " + resultsSize + "\nresults.size(): " + results.size());
+//			System.out.println("Element 1 of the list is: " + results.get(1));
+//			System.out.println("**************************************************");
+			results.clear();
+		}while(doCalc);
+		outWriter.print("\n]");
+		
+//		results = determineProbThreaded(response, size, numDice);
+		outWriter.close();
+		outStream.close();
+		System.out.println("Number of results: " + resultsSize);
 		System.out.println("Request finished in " + (System.currentTimeMillis() - startMilli) + "ms");
 		response.setStatus(200);
-		for(int i = 0; i < results.size(); i++)
-		{
-			response.getWriter().println(results.get(i));
-		}
-//		response.getWriter().println(results);
-//		return ResponseEntity.status(200).body(results);
 	}
 	
-	public List<Integer> determineProbThreaded(int size, int numDice) 
+	//Problem encountered: How do I set up the dice for each thread? This seems like a very 
+	//tough problem to solve. I think I'm going to abandon this for now.
+	public List<Integer> determineProbThreaded(HttpServletResponse response, int size, int numDice, int startNum, int endNum) 
 	{
 		List<Integer> results = new ArrayList<Integer>();
 		List<Integer> diceArray = new ArrayList<Integer>();
@@ -88,6 +155,7 @@ public class ProbabilityController
 			//start the threads
 			for(ProbabilityThread thread: threadList)
 			{
+				System.out.println(thread.getName() + " starting at " + thread.getStartNum() + " and ending at " + thread.getEndNum());
 				thread.start();
 			}
 			
@@ -140,16 +208,16 @@ public class ProbabilityController
 			}
 		}
 		
-		return null;
+		return results;
 	}
 
-	public static List<Integer> determineProbability(int size, int numDice)
+	public static List<Integer> determineProbability(int size, int numDice, long startNum, long endNum)
 	{
 		List<Integer> results = new ArrayList<Integer>();
 		List<Integer> diceArray = new ArrayList<Integer>();
 //		Date startTime = new Date(startMilli);
-		int minResult = numDice;
-		int maxResult = numDice * size;
+		long minResult = numDice;
+		long maxResult = numDice * size;
 		int temp = 0;
 		boolean incNext = true;
 		
@@ -159,8 +227,9 @@ public class ProbabilityController
 //			System.out.println("Adding dice # " + (i + 1));
 			diceArray.add(1);
 		}
-		
-		for(int i = 0; i < Math.pow(size, numDice); i++)
+		results.clear();
+//		System.out.println("results in determineProbability function before calculation: " + results.size());
+		for(long i = startNum; i <= endNum; i++)
 		{
 			for(int j = 0; j < numDice; j++)
 			{
@@ -190,7 +259,7 @@ public class ProbabilityController
 //				System.out.println("Dice #" + (j + 1) + " = " + diceArray.get(j));
 //			}
 		}
-		
+//		System.out.println("results in determineProbability function after calculation: " + results.size());
 		return results;
 	}
 }

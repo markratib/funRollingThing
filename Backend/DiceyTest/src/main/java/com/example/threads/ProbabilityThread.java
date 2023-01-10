@@ -2,7 +2,8 @@ package com.example.threads;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+
+import lombok.Data;
 
 public class ProbabilityThread extends Thread
 {
@@ -109,4 +110,49 @@ public class ProbabilityThread extends Thread
 	{
 		this.results = null;
 	}
+	
+	public int getInterval() {
+		return interval;
+	}
+
+	public void setInterval(int interval) {
+		this.interval = interval;
+	}
+
+	public int getDiceSize() {
+		return diceSize;
+	}
+
+	public void setDiceSize(int diceSize) {
+		this.diceSize = diceSize;
+	}
+
+	public int getNumDice() {
+		return numDice;
+	}
+
+	public void setNumDice(int numDice) {
+		this.numDice = numDice;
+	}
+
+	public int getStartNum() {
+		return startNum;
+	}
+
+	public void setStartNum(int startNum) {
+		this.startNum = startNum;
+	}
+
+	public int getEndNum() {
+		return endNum;
+	}
+
+	public void setEndNum(int endNum) {
+		this.endNum = endNum;
+	}
+
+	public void setResults(List<Integer> results) {
+		this.results = results;
+	}
+
 }
